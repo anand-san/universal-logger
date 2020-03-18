@@ -43,7 +43,7 @@ app.post('/', (req, res) => {
 
 })
 
-app.get('/', (req, res) => {
+app.get('/', async(req, res) => {
     try{
         if(!req.query.id){
             throw "Id is required to get logs"
@@ -61,11 +61,20 @@ app.get('/', (req, res) => {
                     throw `Please Provide a date to filter, Available Dates : ${availableDates.toString()}`
                 }
                 if(fs.existsSync(`${sourceDir}/${req.query.subProj}/${req.query.date}`)){
-                    fs.readFile(`logs/${req.query.id}/${req.query.subProj}/${req.query.date}/log.log`, ((err, data) => {
-                        if(err)
-                            throw err
-                        res.status(200).json({ Status: "Success", Logs: (new Buffer(data)).toString() })
-                }))
+                    const fileStream = fs.createReadStream(`logs/${req.query.id}/${req.query.subProj}/${req.query.date}/log.log`);
+                    const rl = readline.createInterface({
+                        input: fileStream,
+                        crlfDelay: Infinity
+                      });
+                    var newData = []
+                    for await(const line of rl) {
+                        try{
+                            newData.push(JSON.parse(line))
+                        }catch(e){
+                            console.log(line)
+                        }
+                    }
+                    res.status(200).json({ Status: "Success", Logs: newData })
                 }else{
                     throw `Invalid Date, Available Dates Are : ${availableDates.toString()}`
                 }
@@ -76,6 +85,7 @@ app.get('/', (req, res) => {
         else
             throw "Invalid Id"
     }catch(e){
+        console.log(e)
         const logger = createLogger({
             format: format.combine(
                 format.timestamp(),

@@ -45,6 +45,8 @@ app.post('/', (req, res) => {
 
 app.get('/', async(req, res) => {
     try{
+        var currentPage = req.query.page ? req.query.page : 1
+        currentPage = currentPage <= 0 ? 1 : currentPage
         if(!req.query.id){
             throw "Id is required to get logs"
         }
@@ -74,7 +76,20 @@ app.get('/', async(req, res) => {
                             console.log(line)
                         }
                     }
-                    res.status(200).json({ Status: "Success", Logs: newData })
+                    try{
+                        let count = 0
+                        var paginatedData = newData.reduce((a,c) => {
+                            if(count > ((currentPage - 1) * 500) && count < currentPage*500)
+                                a.push(c)
+                            count++
+                            return a
+                        }, [])
+                    }catch(e){
+                        throw "Error occoured while handling your request"
+                    }
+
+                    finalResponse = [{Total : newData.length, Page: currentPage, Logs : paginatedData}]
+                    res.status(200).json({ Status: "Success", Message: finalResponse })
                 }else{
                     throw `Invalid Date, Available Dates Are : ${availableDates.toString()}`
                 }

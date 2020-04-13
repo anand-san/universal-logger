@@ -6,7 +6,7 @@
 
 [![ExpressJS](https://img.shields.io/badge/ExpressJS-black.svg?style=for-the-badge)](https://expressjs.com)
 [![Discord](https://img.shields.io/badge/discord-chat-green.svg?style=for-the-badge)](https://discord.gg/5mwNujH)
-[![](https://img.shields.io/badge/LICENSE-MIT-orange.svg?style=for-the-badge)](./LICENSE)
+[![](https://img.shields.io/badge/LICENSE-GNU-orange.svg?style=for-the-badge)](./LICENSE)
 [![Contribution](https://img.shields.io/badge/contribute-green.svg?style=for-the-badge)](https://github.com/seanjin17/universal-logger/pulls)
 
 
